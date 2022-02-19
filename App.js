@@ -1,11 +1,76 @@
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import exerciseIcon from './assets/fitness.png';
+import { BsInfoCircle } from 'react-icons/bs';
+import { BiReset } from 'react-icons/bi';
+
 function Exercises({ navigation }) {
   const [exercises, setExercises] = useState([
-      { title: 'Benchpress', sets: 3, sets_todo: 3, reps: 6, item: '80 kg', key: '1', cardStyle: card_styles.card },
-      { title: 'Deadlift', sets: 3, sets_todo: 3, reps: 8, item: '120 kg', key: '2', cardStyle: card_styles.card },
-      { title: 'Bendover Row', sets: 5, sets_todo: 5, reps: 4, item: '60 kg', key: '3', cardStyle: card_styles.card },
+    {
+      title: 'Benchpress',
+      sets: 3,
+      sets_todo: 3,
+      reps: 4, item: '50 kg',
+      key: '1',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'Bent-Over Row',
+      sets: 3,
+      sets_todo: 3,
+      reps: 4, item: '50 kg',
+      key: '2',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'Pull-Up',
+      sets: 3,
+      sets_todo: 3,
+      reps: 4, item: '+2 kg',
+      key: '3',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'Dumbbell Push Press',
+      sets: 3,
+      sets_todo: 3,
+      reps: 4, item: '16 kg',
+      key: '4',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'Deadlift',
+      sets: 3,
+      sets_todo: 3,
+      reps: 4, item: '75 kg',
+      key: '5',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'Sideway Planking',
+      sets: 3,
+      sets_todo: 3,
+      reps: 2, item: '30 sec',
+      key: '6',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'Squat',
+      sets: 3,
+      sets_todo: 3,
+      reps: 4, item: '75 kg',
+      key: '7',
+      cardStyle: card_styles.counterDoing
+    },
+    {
+      title: 'One-Leg Standing',
+      sets: 3,
+      sets_todo: 3,
+      reps: 2, item: '60 sec',
+      key: '8',
+      cardStyle: card_styles.counterDoing
+    },
   ]);
 
   const onExercisePress = (key) => {
@@ -15,7 +80,7 @@ function Exercises({ navigation }) {
           exercise.sets_todo -= 1;
         }
         if (exercise.sets_todo == 0) {
-          exercise.cardStyle = card_styles.finishedCard;
+          exercise.cardStyle = card_styles.counterDone;
         }
         return exercise;
       } else {
@@ -28,7 +93,7 @@ function Exercises({ navigation }) {
     setExercises(exercises.map((exercise) => {
       if (exercise.key == key) {
         exercise.sets_todo = exercise.sets;
-        exercise.cardStyle = card_styles.card;
+        exercise.cardStyle = card_styles.counterDoing;
         return exercise;
       } else {
         return exercise;
@@ -36,143 +101,150 @@ function Exercises({ navigation }) {
     }));
   }
 
-  return (
-    <View style={ styles.container }>
-      <FlatList data={ exercises } renderItem={({ item }) => (
-        <View style={card_styles.listItem}>
-
-          <View style={card_styles.buttons}>
-            <TouchableOpacity onPress={() => onResetExercisePress(item.key)}>
-              <View style={card_styles.resetButton}>
-                <Text>Reset</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => navigation.navigate('ExerciseInfo', { key: item.key })}>
-              <View style={card_styles.infoButton}>
-                <Text>Info</Text>
-              </View>
-            </TouchableOpacity>
+  const renderItem = ({item}) => {
+    return (
+      <View style={card_styles.item}>
+        <TouchableOpacity
+          style={card_styles.infoText}
+          onPress={() => onExercisePress(item.key)}
+        >
+          <View style={card_styles.counterView}>
+            <View style={item.cardStyle}>
+              {item.sets_todo}
+            </View>
           </View>
 
-          <TouchableOpacity onPress={() => onExercisePress(item.key)}>
-            <View style={item.cardStyle}>
-              <View style={card_styles.cardContent}>
-                <Text>{item.title}</Text>
-                <View style={card_styles.exerciseInfo}>
-                  <View style={card_styles.item}>
-                    <Text>Sets</Text>
-                    <Text>Remaining: {item.sets_todo}</Text>
-                    <Text>Done: {item.sets - item.sets_todo}</Text>
-                  </View>
-                  <View style={card_styles.item}>
-                    <Text>Reps: {item.reps}</Text>
-                  </View>
-                  <View style={card_styles.item}>
-                    <Text>Weight: {item.item}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+          <View style={card_styles.exerciseInfo}>
+            <Text style={card_styles.exerciseName}>{item.title}</Text>
+            <Text>{item.reps} x {item.item}</Text>
+          </View>
+
+          <View style={card_styles.exerciseIconView}>
+            <Image
+              source={exerciseIcon}
+              style={card_styles.exerciseIcon}
+            />
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.buttons}>
+          <TouchableOpacity
+            style={card_styles.infoButtonView}
+            onPress={() => navigation.navigate('ExerciseInfo', { key: item.key })}
+          >
+            <BsInfoCircle size={20} />
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={card_styles.resetButtonView}
+            onPress={() => onResetExercisePress(item.key)}
+          >
+            <BiReset size={20} />
+          </TouchableOpacity>
         </View>
-      )} />
+      </View>
+    );
+  };
+
+  return (
+    <View style={card_styles.container}>
+      <FlatList
+        data={exercises}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+      />
     </View>
   );
 }
 
 const card_styles = StyleSheet.create({
-  listItem: {
-    flexDirection: 'row',
-  },
-  card: {
-    borderRadius: 6,
-    elevation: 3,
+  container: {
+    flex: 1,
     backgroundColor: '#eee',
-    shadowOffset: { width: 1, height: 1 },
-    shadowColor: '#333',
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    marginHorizontal: 4,
-    marginVertical: 6,
-  },
-  finishedCard: {
-    borderRadius: 6,
-    elevation: 3,
-    backgroundColor: '#98fb98',
-    shadowOffset: { width: 1, height: 1 },
-    shadowColor: '#333',
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    marginHorizontal: 4,
-    marginVertical: 6,
-  },
-  cardContent: {
-    marginHorizontal: 18,
-    marginVertical: 20,
-    alignItems: 'center',
-  },
-  exerciseInfo: {
-    flexDirection: 'row',
   },
   item: {
-    borderRadius: 6,
-    marginHorizontal: 6,
-    marginVertical: 4,
+    padding: 10,
+    borderRadius: 10,
+    height: 100,
+    backgroundColor: '#ffeddb',
+    flexDirection: 'row',
+    marginTop: 6,
+    marginBottom: 6,
+    marginLeft: 6,
+    marginRight: 6,
+    shadowOpacity: 1,
+    shadowRadius: 4,
+  },
+  infoText: {
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  counterView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 84,
+  },
+  counterDoing: {
+    height: 50,
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#777',
+    backgroundColor: '#65c18c',
+  },
+  counterDone: {
+    height: 50,
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#777',
+    backgroundColor: '#ff7ba9',
+  },
+  buttons: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  exerciseInfo: {
+    flex: 1,
+    padding: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttons: {
-    flexDirection: 'column',
-    padding: 2,
-  },
-  resetButton: {
-    backgroundColor: '#ff6347',
-    minHeight: 50,
-    flex: 1,
-    marginHorizontal: 4,
-    marginVertical: 4,
-    textAlign: 'center',
+  exerciseIconView: {
+    padding: 5,
+    alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
   },
-  infoButton: {
-    backgroundColor: '#1e90ff',
-    flex: 1,
-    minHeight: 50,
-    marginHorizontal: 4,
-    marginVertical: 4,
-    textAlign: 'center',
+  exerciseIcon: {
+    height: 75,
+    width: 75,
+  },
+  infoButtonView: {
+    padding: 5,
+    alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
+    width: 40,
+    height: 40,
   },
-  //resetButton: {
-  //  borderWidth: 1,
-  //  borderColor: 'rgba(0,0,0,0.2)',
-  //  backgroundColor: '#ff6347',
-  //  alignItems: 'center',
-  //  justifyContent: 'center',
-  //  textAlign: 'center',
-  //  marginHorizontal: 4,
-  //  marginVertical: 6,
-  //  width: 100,
-  //  height: 100,
-  //  borderRadius: 50,
-  //},
-  //infoButton: {
-  //  borderWidth: 1,
-  //  borderColor: 'rgba(0,0,0,0.2)',
-  //  backgroundColor: '#1e90ff',
-  //  alignItems: 'center',
-  //  justifyContent: 'center',
-  //  textAlign: 'center',
-  //  marginHorizontal: 4,
-  //  marginVertical: 6,
-  //  width: 100,
-  //  height: 100,
-  //  borderRadius: 50,
-  //},
+  resetButtonView: {
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+  },
+  exerciseName: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
 });
 
 import barbell_front from './static/barbell-male-deadlift-front_fFMvXc0.gif';
@@ -191,7 +263,7 @@ function DeadLift() {
 }
 
 function ExerciseInfo({ route, navigation }) {
-  if (route.params.key == 2) {
+  if (route.params.key == 5) {
     // Deadlift
     return (
       <View style={stylesExerciseInfo.container}>
