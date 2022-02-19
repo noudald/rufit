@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import exerciseIcon from './assets/fitness.png';
-import { BsInfoCircle } from 'react-icons/bs';
-import { BiReset } from 'react-icons/bi';
+import barbell_front from './static/barbell-male-deadlift-front_fFMvXc0.gif';
+import barbell_side from './static/barbell-male-deadlift-side_dnPUuTI.gif';
 
 function Exercises({ navigation }) {
   const [exercises, setExercises] = useState([
@@ -110,7 +111,7 @@ function Exercises({ navigation }) {
         >
           <View style={card_styles.counterView}>
             <View style={item.cardStyle}>
-              {item.sets_todo}
+              <Text>{item.sets_todo}</Text>
             </View>
           </View>
 
@@ -132,14 +133,20 @@ function Exercises({ navigation }) {
             style={card_styles.infoButtonView}
             onPress={() => navigation.navigate('ExerciseInfo', { key: item.key })}
           >
-            <BsInfoCircle size={20} />
+            <FontAwesome5
+              name='info'
+              size={20}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={card_styles.resetButtonView}
             onPress={() => onResetExercisePress(item.key)}
           >
-            <BiReset size={20} />
+            <FontAwesome5
+              name='redo-alt'
+              size={20}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -151,7 +158,7 @@ function Exercises({ navigation }) {
       <FlatList
         data={exercises}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.key}
       />
     </View>
   );
@@ -224,8 +231,12 @@ const card_styles = StyleSheet.create({
     justifyContent: 'center',
   },
   exerciseIcon: {
-    height: 75,
-    width: 75,
+    height: 50,
+    width: 50,
+  },
+  exerciseGif: {
+    height: 200,
+    width: 300,
   },
   infoButtonView: {
     padding: 5,
@@ -247,17 +258,20 @@ const card_styles = StyleSheet.create({
   },
 });
 
-import barbell_front from './static/barbell-male-deadlift-front_fFMvXc0.gif';
-import barbell_side from './static/barbell-male-deadlift-side_dnPUuTI.gif';
-
 function DeadLift() {
   return (
     <View>
       <Text>Deadlift</Text>
       <Text>Images from musclewiki.com</Text>
       <Text>Difficulty: Advanced</Text>
-      <Image source={barbell_front} style={{ flex: 1, width: 300, height: null, resizeMode: 'contain' }}/>
-      <Image source={barbell_side} style={{ flex: 1, width: 300, height: null, resizeMode: 'contain' }}/>
+      <Image
+        source={barbell_front}
+        style={card_styles.exerciseGif}
+      />
+      <Image
+        source={barbell_side}
+        style={card_styles.exerciseGif}
+      />
     </View>
   );
 }
