@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+//import Fireworks from 'react-native-fireworks';
+import ConfettiCannon from 'react-native-confetti-cannon';
 
 import exerciseIcon from './assets/fitness.png';
 import barbell_front from './static/barbell-male-deadlift-front_fFMvXc0.gif';
@@ -74,6 +76,8 @@ function Exercises({ navigation }) {
     },
   ]);
 
+  const [showFireworks, setShowFireworks] = useState(false);
+
   const onExercisePress = (key) => {
     setExercises(exercises.map((exercise) => {
       if (exercise.key == key) {
@@ -88,6 +92,13 @@ function Exercises({ navigation }) {
         return exercise;
       }
     }));
+
+    let reps_left = exercises
+      .map((exercises) => exercises.sets_todo)
+      .reduce((a, b) => a + b, 0);
+    if (reps_left == 0) {
+      setShowFireworks(true);
+    }
   };
 
   const onResetExercisePress = (key) => {
@@ -100,6 +111,7 @@ function Exercises({ navigation }) {
         return exercise;
       }
     }));
+    setShowFireworks(false);
   }
 
   const renderItem = ({item}) => {
@@ -160,6 +172,7 @@ function Exercises({ navigation }) {
         renderItem={renderItem}
         keyExtractor={item => item.key}
       />
+      {showFireworks && <ConfettiCannon count={100} origin={{x: -10, y: 0}} />}
     </View>
   );
 }
@@ -179,6 +192,7 @@ const card_styles = StyleSheet.create({
     marginBottom: 6,
     marginLeft: 6,
     marginRight: 6,
+    borderColor: '#333',
     shadowOpacity: 1,
     shadowRadius: 4,
   },
