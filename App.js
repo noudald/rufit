@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View, YellowBox } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 //import Fireworks from 'react-native-fireworks';
 import ConfettiCannon from 'react-native-confetti-cannon';
+
+// TODO: Doesn't work?
+YellowBox.ignoreWarnings([
+  'Non-serializable values were found in the navigation state',
+]);
 
 import exerciseIcon from './assets/fitness.png';
 import barbell_front from './static/barbell-male-deadlift-front_fFMvXc0.gif';
@@ -406,6 +411,18 @@ function Exercises({route,  navigation}) {
     setShowFireworks(false);
   }
 
+  const finishWorkout = () => {
+    route.params.setExerciseOverview(
+      route.params.exerciseOverview.map((item) => {
+        if (item.key == route.params.key) {
+          item.finished = true;
+        }
+        return item;
+      })
+    );
+    navigation.goBack();
+  };
+
   const renderItem = ({item}) => {
     return (
       <View style={card_styles.item}>
@@ -466,6 +483,14 @@ function Exercises({route,  navigation}) {
         renderItem={renderItem}
         keyExtractor={item => item.key}
       />
+
+      <TouchableOpacity
+        style={card_styles.finishTraining}
+        onPress={() => finishWorkout()}
+      >
+        <Text>Finish training</Text>
+      </TouchableOpacity>
+
       {showFireworks && <ConfettiCannon count={100} origin={{x: -10, y: 0}} />}
     </View>
   );
@@ -564,6 +589,16 @@ const card_styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
+  finishTraining: {
+    height: 25,
+    backgroundColor: 'green',
+    flexDirection: 'row',
+    marginTop: 6,
+    marginBottom: 6,
+    borderColor: '#333',
+    shadowOpacity: 1,
+    shadowRadius: 4,
+  },
 });
 
 function DeadLift() {
@@ -650,7 +685,8 @@ function ExerciseOverview ({ navigation }) {
           'Exercises',
           {
             key: item.key,
-            exerciseOverview,
+            exerciseOverview: exerciseOverview,
+            setExerciseOverview: setExerciseOverview,
           }
         )}
       >
